@@ -1,0 +1,8 @@
+epoch: 1, iter: 0, lr=0.1, spent 12.32 s, tr_loss: 2.328
+standard acc: 8.594%, robustness acc: 7.812%
+epoch: 1, iter: 100, lr=0.1, spent 972.57 s, tr_loss: 2.112
+standard acc: 27.344%, robustness acc: 15.625%
+epoch: 1, iter: 200, lr=0.1, spent 967.72 s, tr_loss: 2.125
+standard acc: 34.375%, robustness acc: 25.000%
+epoch: 1, iter: 300, lr=0.1, spent 526.09 s, tr_loss: 2.000
+standard acc: 35.938%, robustness acc: 23.438%
