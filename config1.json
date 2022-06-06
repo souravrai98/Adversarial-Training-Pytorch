@@ -9,10 +9,10 @@
     "weight_decay": 2e-4,
     "radius": 2, 
     "projected": 1, 
-    "epochs": 500, 
+    "epochs": 202, 
     
-    "tb_path_test": "/home/sourav/Lottery-Main/cf/test",
-    "tb_path_train": "/home/sourav/Lottery-Main/cf/train",
+    "tb_path_test": "/home/sourav/adversarial_pruning/cf/test",
+    "tb_path_train": "/home/sourav/adversarial_pruning/cf/train",
     "log_folder":"/home/sourav/adversarial_pruning/log",
 
     "batch_statistics_freq": 100,

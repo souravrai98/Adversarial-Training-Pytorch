@@ -221,7 +221,7 @@ def tensor2cuda(tensor):
 
     return tensor
 
-def create_logger(save_path='', file_type='', level='debug'):
+def create_logger(epsilon,save_path='', file_type='', level='debug'):
 
     if level == 'debug':
         _level = logging.DEBUG
@@ -236,7 +236,7 @@ def create_logger(save_path='', file_type='', level='debug'):
     logger.addHandler(cs)
 
     if save_path != '':
-        file_name = os.path.join(save_path, file_type + '_log.txt')
+        file_name = os.path.join(save_path, file_type +'_epsilon_'+str(epsilon)+ '_log.txt')
         fh = logging.FileHandler(file_name, mode='w')
         fh.setLevel(_level)
 

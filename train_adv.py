@@ -40,22 +40,7 @@ def flat_weight_dump(model):
     return flat_tensor
 
 
-def tb_dump(epoch, net, writer1,writer2):
-    """ Routine for dumping info on tensor board at the end of an epoch """
-    print('=> eval on test data')
-    (test_loss, test_acc, adv_test_loss, adv_test_acc, _) = test(testloader, net, device)
-    writer1.add_scalar('Loss/test', test_loss, epoch)
-    writer1.add_scalar('Accuracy', test_acc, epoch)
-   # writer1.add_scaler('Adversarial Loss Test', adv_test_loss, epoch)
-    writer1.add_scalar('Adversarial Accuracy', adv_test_acc, epoch)
 
-    print('=> eval on train data')
-    (train_loss, train_acc, adv_train_loss, adv_train_acc, _) = test(trainloader, net, device)
-    writer2.add_scalar('Loss/train', train_loss, epoch)
-    writer2.add_scalar('Accuracy', train_acc, epoch)
-   # writer2.add_scalar('Adversarial Loss Train', adv_train_loss, epoch)
-    writer2.add_scalar('Adversarial Accuracy', adv_train_acc, epoch)
-    print('epoch %d done\n' % (epoch))
 
 
 def test(model, loader, adv_test=False, use_pseudo_label=False):
@@ -107,6 +92,9 @@ def train(model,tr_loader,va_loader=None, adv_train=False):
         _iter = 0
 
         begin_time = time.time()
+
+        writer1 = SummaryWriter(config_tb_path_train)
+        writer2 = SummaryWriter(config_tb_path_test)
 
         for epoch in range(1, config_epochs+1):
             for data, label in tr_loader:
@@ -163,7 +151,10 @@ def train(model,tr_loader,va_loader=None, adv_train=False):
                                 f'spent {time.time()-begin_time:.2f} s, tr_loss: {loss.item():.3f}')
 
                     logger.info(f'standard acc: {std_acc:.3f}%, robustness acc: {adv_acc:.3f}%')
-
+                    
+                    writer1.add_scalar('Accuracy', std_acc, _iter)
+   
+                    writer1.add_scalar('Adversarial Accuracy', adv_acc, _iter)
                     # begin_time = time()
 
                     # if va_loader is not None:
@@ -187,13 +178,19 @@ def train(model,tr_loader,va_loader=None, adv_train=False):
                 t1 = time.time()
                 va_acc, va_adv_acc = test(model, va_loader, True, False)
                 va_acc, va_adv_acc = va_acc * 100.0, va_adv_acc * 100.0
-
+                
                 t2 = time.time()
                 logger.info('\n'+'='*20 +f' evaluation at epoch: {epoch} iteration: {_iter} ' \
                     +'='*20)
                 logger.info(f'test acc: {va_acc:.3f}%, test adv acc: {va_adv_acc:.3f}%, spent: {t2-t1:.3f} s')
                 logger.info('='*28+' end of evaluation '+'='*28+'\n')
+                
+                writer2.add_scalar('Accuracy', va_acc, _iter)
+   
+                writer2.add_scalar('Adversarial Accuracy', va_adv_acc, _iter)
 
+        writer2.close()
+        writer1.close()
 
 # ################
 parser = argparse.ArgumentParser(description='PyTorch Adversarial Training')
@@ -332,7 +329,7 @@ if not os.path.exists(config_log_folder):
 #path_name = config_tb_path + \
 #    str(config_experiment_number) + "_" + str(optimizer)
 
-logger = create_logger(config_log_folder,'train','info')
+logger = create_logger(config_epsilon,config_log_folder,'train','info')
 
 
 # Initialize weights
